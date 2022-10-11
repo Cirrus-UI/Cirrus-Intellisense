@@ -13,7 +13,52 @@
     "*"
   ],
   "main": "./out/extension.js",
-  "contributes": {},
+  "contributes": {
+    "configuration": [
+      {
+        "title": "Cirrus Intellisense",
+        "properties": {
+          "cirrus-intellisense.html-languages": {
+            "type": "array",
+            "description": "List of HTML based languages to autocomplete.",
+            "default": [
+              "html",
+              "vue",
+              "razor",
+              "blade",
+              "handlebars",
+              "twig",
+              "django-html",
+              "php",
+              "markdown",
+              "erb",
+              "ejs",
+              "svelte"
+            ]
+          },
+          "cirrus-intellisense.css-languages": {
+            "type": "array",
+            "description": "List of CSS based languages to autocomplete.",
+            "default": [
+              "css",
+              "sass",
+              "scss",
+              "less"
+            ]
+          },
+          "cirrus-intellisense.js-languages": {
+            "type": "array",
+            "description": "List of JavaScript based languages to autocomplete.",
+            "default": [
+              "javascript",
+              "javascriptreact",
+              "typescriptreact"
+            ]
+          }
+        }
+      }
+    ]
+  },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",

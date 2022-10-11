@@ -6,6 +6,7 @@ import { ClassProvider } from './class-provider';
 import { CLASS_CDN, TRIGGER_CHARS } from './constants';
 import CssExtractor from './css-extractor';
 import Fetcher from './fetcher';
+import { ExtensionConfig } from './config';
 
 const disposables: vscode.Disposable[] = [];
 let classAutocompleteItems: string[] = [];
@@ -37,7 +38,12 @@ async function hydrateClasses() {
 function registerProviders(disposables: vscode.Disposable[]) {
     // TODO: Allow configuration for which file extensions to register for
     // TODO: Support JS files and CSS files
-    disposables.push(vscode.languages.registerCompletionItemProvider(`html`, htmlProvider, ...TRIGGER_CHARS));
+    vscode.workspace
+        .getConfiguration()
+        ?.get<string[]>(ExtensionConfig.HtmlLanguages)
+        ?.forEach((language) => {
+            disposables.push(vscode.languages.registerCompletionItemProvider(language, htmlProvider, ...TRIGGER_CHARS));
+        });
 }
 
 function unregisterProviders(disposables: vscode.Disposable[]) {
