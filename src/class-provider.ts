@@ -13,10 +13,12 @@ import {
 
 export class ClassProvider implements CompletionItemProvider {
     private classRegex: RegExp;
-    private classAutocompleteItems: string[] = [];
+    private splitChar: string; // Used to delimit class names
+    private autoCompleteClasses: string[] = [];
 
-    constructor(classRegex: RegExp) {
+    constructor(classRegex: RegExp, splitChar: string = " ") {
         this.classRegex = classRegex;
+        this.splitChar = splitChar;
     }
 
     public provideCompletionItems(
@@ -31,14 +33,18 @@ export class ClassProvider implements CompletionItemProvider {
         const text: string = document.getText(range); // Get selection
 
         // If we are not on a class attribute matching the given regex, exit
-        const rawClasses = text.match(this.classRegex);;
+        const rawClasses = text.match(this.classRegex);
         
         if (!rawClasses || rawClasses.length === 1) {
             return [];
         }
 
-        // TODO: Get completion items
-        const completionItems = this.classAutocompleteItems.map((className) => {
+        // Get classes already used in selector
+        const usedClasses = new Set(rawClasses[1].split(this.splitChar));
+
+        // Filter out used classes from class list
+        const unusedClasses = this.autoCompleteClasses.filter(item => !usedClasses.has(item));
+        const completionItems = unusedClasses.map((className) => {
             const completionItem = new CompletionItem(className, CompletionItemKind.Variable);
 
             completionItem.filterText = className;
@@ -46,12 +52,10 @@ export class ClassProvider implements CompletionItemProvider {
             return completionItem;
         });
 
-        // TODO: Remove classes already in use
-
         return completionItems;
     }
 
     public setAutocompleteItems(items: string[]) {
-        this.classAutocompleteItems = items;
+        this.autoCompleteClasses = items;
     }
 }

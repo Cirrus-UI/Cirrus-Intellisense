@@ -15,16 +15,6 @@ const htmlProvider = new ClassProvider(/class=["|']([\w- ]*$)/);
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
-    console.debug(`STARTING`);
-
-    let disposable = vscode.commands.registerCommand('cirrus-intellisense.helloWorld', () => {
-        // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World from cirrus-intellisense!');
-    });
-
-    context.subscriptions.push(disposable);
-
     await hydrateClasses();
     registerProviders(disposables);
 }
