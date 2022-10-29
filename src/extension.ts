@@ -15,6 +15,7 @@ let classAutocompleteItems: string[] = [];
 
 // Providers
 const htmlProvider = new ClassProvider(/class=["|']([\w- ]*$)/);
+const cssProvider = new ClassProvider(/@extend ([.\w- ]*$)/, `.`);
 
 // Status bar item
 const statusBarItem = new StatusBarItem(Command.Sync);
@@ -35,13 +36,14 @@ export function deactivate() {
 async function hydrate() {
     try {
         console.debug(`HYDRATE`);
-        statusBarItem.setStatus(StatusBarItemIcon.LOADING, `Syncing latest version of Cirrus...`)
-    
+        statusBarItem.setStatus(StatusBarItemIcon.LOADING, `Syncing latest version of Cirrus...`);
+
         const cssAst = await Fetcher.fetchStyleSheet(CLASS_CDN);
         const classes = CssExtractor.extract(cssAst);
-    
+
         classAutocompleteItems = _.uniq(classes);
         htmlProvider.setAutocompleteItems(classAutocompleteItems);
+        cssProvider.setAutocompleteItems(classAutocompleteItems);
 
         statusBarItem.setStatus(StatusBarItemIcon.DO_ACTION, `Cirrus synced. Click to sync again`);
     } catch (err) {
@@ -60,20 +62,29 @@ function registerProviders(context: vscode.ExtensionContext, disposables: vscode
             disposables.push(vscode.languages.registerCompletionItemProvider(language, htmlProvider, ...TRIGGER_CHARS));
         });
 
-    context.subscriptions.push(vscode.commands.registerCommand(Command.Sync, async () => {
-        if (syncing) {
-            return;
-        }
+    vscode.workspace
+        .getConfiguration()
+        ?.get<string[]>(ExtensionConfig.CssLanaguages)
+        ?.forEach((language) => {
+            disposables.push(vscode.languages.registerCompletionItemProvider(language, cssProvider, ...TRIGGER_CHARS));
+        });
 
-        syncing = true;
-        try {
-            await hydrate();
-        } catch (err) {
-            console.error(`Cirrus Intellisense`, err);
-        } finally {
-            syncing = false;
-        }
-    }));
+    context.subscriptions.push(
+        vscode.commands.registerCommand(Command.Sync, async () => {
+            if (syncing) {
+                return;
+            }
+
+            syncing = true;
+            try {
+                await hydrate();
+            } catch (err) {
+                console.error(`Cirrus Intellisense`, err);
+            } finally {
+                syncing = false;
+            }
+        })
+    );
 }
 
 function unregisterProviders(disposables: vscode.Disposable[]) {

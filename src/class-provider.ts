@@ -13,11 +13,13 @@ import {
 
 export class ClassProvider implements CompletionItemProvider {
     private classRegex: RegExp;
+    private classPrefix: string;
     private splitChar: string; // Used to delimit class names
     private autoCompleteClasses: string[] = [];
 
-    constructor(classRegex: RegExp, splitChar: string = " ") {
+    constructor(classRegex: RegExp, classPrefix: string = "", splitChar: string = " ") {
         this.classRegex = classRegex;
+        this.classPrefix = classPrefix;
         this.splitChar = splitChar;
     }
 
@@ -44,11 +46,13 @@ export class ClassProvider implements CompletionItemProvider {
 
         // Filter out used classes from class list
         const unusedClasses = this.autoCompleteClasses.filter(item => !usedClasses.has(item));
+        
         const completionItems = unusedClasses.map((className) => {
             const completionItem = new CompletionItem(className, CompletionItemKind.Variable);
+            const completionClassName = `${this.classPrefix}${className}`;
 
             completionItem.filterText = className;
-            completionItem.insertText = className;
+            completionItem.insertText = completionClassName;
             return completionItem;
         });
 
