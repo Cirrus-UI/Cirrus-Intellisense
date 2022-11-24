@@ -9,22 +9,25 @@ import Fetcher from './fetcher';
 import { ExtensionConfig } from './config';
 import { StatusBarItem, StatusBarItemIcon } from './status-bar-item';
 import { Command } from './commands';
+import { ProviderSyntax } from './provider-languages';
 
 const disposables: vscode.Disposable[] = [];
 let classAutocompleteItems: string[] = [];
 
 // Providers
-const htmlProvider = new ClassProvider(/class=["|']([\w- ]*$)/);
-const cssProvider = new ClassProvider(/@extend ([.\w- ]*$)/, `.`);
+const PROVIDERS = new Map<ProviderSyntax, ClassProvider>([
+    [ProviderSyntax.HTML, new ClassProvider(/class=["|']([\w- ]*$)/)],
+    [ProviderSyntax.CSS, new ClassProvider(/@extend ([.\w- ]*$)/, `.`)],
+    [ProviderSyntax.REACT, new ClassProvider(/className=["|']([\w- ]*$)/)],
+    [ProviderSyntax.JAVASCRIPT, new ClassProvider(/class=["|']([\w- ]*$)/)],
+]);
 
 // Status bar item
 const statusBarItem = new StatusBarItem(Command.Sync);
 let syncing = false;
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
-    await hydrate();
+    await hydrate([...PROVIDERS.values()]);
     registerProviders(context, disposables);
 }
 
@@ -33,7 +36,7 @@ export function deactivate() {
     unregisterProviders(disposables);
 }
 
-async function hydrate() {
+async function hydrate(providers: ClassProvider[]) {
     try {
         console.debug(`HYDRATE`);
         statusBarItem.setStatus(StatusBarItemIcon.LOADING, `Syncing latest version of Cirrus...`);
@@ -42,8 +45,8 @@ async function hydrate() {
         const classes = CssExtractor.extract(cssAst);
 
         classAutocompleteItems = _.uniq(classes);
-        htmlProvider.setAutocompleteItems(classAutocompleteItems);
-        cssProvider.setAutocompleteItems(classAutocompleteItems);
+
+        providers.forEach((provider) => provider.setAutocompleteItems(classAutocompleteItems));
 
         statusBarItem.setStatus(StatusBarItemIcon.DO_ACTION, `Cirrus synced. Click to sync again`);
     } catch (err) {
@@ -59,14 +62,44 @@ function registerProviders(context: vscode.ExtensionContext, disposables: vscode
         .getConfiguration()
         ?.get<string[]>(ExtensionConfig.HtmlLanguages)
         ?.forEach((language) => {
-            disposables.push(vscode.languages.registerCompletionItemProvider(language, htmlProvider, ...TRIGGER_CHARS));
+            disposables.push(
+                vscode.languages.registerCompletionItemProvider(
+                    language,
+                    PROVIDERS.get(ProviderSyntax.HTML)!,
+                    ...TRIGGER_CHARS
+                )
+            );
         });
 
     vscode.workspace
         .getConfiguration()
         ?.get<string[]>(ExtensionConfig.CssLanaguages)
         ?.forEach((language) => {
-            disposables.push(vscode.languages.registerCompletionItemProvider(language, cssProvider, ...TRIGGER_CHARS));
+            disposables.push(
+                vscode.languages.registerCompletionItemProvider(
+                    language,
+                    PROVIDERS.get(ProviderSyntax.CSS)!,
+                    ...TRIGGER_CHARS
+                )
+            );
+        });
+
+    vscode.workspace
+        .getConfiguration()
+        ?.get<string[]>(ExtensionConfig.JavaScriptLanguages)
+        ?.forEach((language) => {
+            disposables.push(
+                vscode.languages.registerCompletionItemProvider(
+                    language,
+                    PROVIDERS.get(ProviderSyntax.REACT)!,
+                    ...TRIGGER_CHARS
+                ),
+                vscode.languages.registerCompletionItemProvider(
+                    language,
+                    PROVIDERS.get(ProviderSyntax.JAVASCRIPT)!,
+                    ...TRIGGER_CHARS
+                )
+            );
         });
 
     context.subscriptions.push(
@@ -77,7 +110,7 @@ function registerProviders(context: vscode.ExtensionContext, disposables: vscode
 
             syncing = true;
             try {
-                await hydrate();
+                await hydrate([...PROVIDERS.values()]);
             } catch (err) {
                 console.error(`Cirrus Intellisense`, err);
             } finally {
