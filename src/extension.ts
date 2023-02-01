@@ -56,8 +56,6 @@ async function hydrate(providers: ClassProvider[]) {
 }
 
 function registerProviders(context: vscode.ExtensionContext, disposables: vscode.Disposable[]) {
-    // TODO: Allow configuration for which file extensions to register for
-    // TODO: Support JS files and CSS files
     vscode.workspace
         .getConfiguration()
         ?.get<string[]>(ExtensionConfig.HtmlLanguages)
