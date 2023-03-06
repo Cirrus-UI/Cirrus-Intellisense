@@ -1,8 +1,8 @@
 {
   "name": "cirrus-intellisense",
-  "displayName": "cirrus-intellisense",
+  "displayName": "Cirrus Intellisense",
   "description": "Autocomplete for Cirrus UI",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "Spiderpig86",
   "author": "Stanley Lim (https://github.com/Spiderpig86)",
   "engines": {
