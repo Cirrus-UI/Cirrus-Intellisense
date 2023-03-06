@@ -1,16 +1,52 @@
-# cirrus-intellisense README
+# Cirrus Intellisense for Visual Studio Code
 
-This is the README for your extension "cirrus-intellisense". After writing up a brief description, we recommend including the following sections.
+Adds all the classes for [Cirrus CSS](https://github.com/Spiderpig86/Cirrus/tree/master) right at your finger tips.
+
+## Installation
+
+<a href="https://marketplace.visualstudio.com/items?itemName=Spiderpig86.cirrus-intellisense/"><strong>Install for Visual Studio Code »</strong></a>
+
+After you've successfully installed Cirrus Intellisense, open up a file with a file extension it supports (e.g. `.html`) to get started!
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+### Autocompletion
 
-For example if there is an image subfolder under your extension project workspace:
+![](./images/Intellisense-AutoComplete.jpg)
 
-\!\[feature X\]\(images/feature-x.png\)
+Fast auto-completion for class names right at your finger tips.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### Multi-langage Support
+
+![](./images/Intellisense-Languages.jpg)
+
+Autocompletion for a large variety of languages ranging from Sass, React, and many more. By default, Cirrus Intellisense supports the following languages right out the box:
+
+- HTML
+- Vue (requires [octoref.vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur))
+- Razor
+- Laravel Blade
+- Handlebars
+- Twig
+- Django Template
+- PHP
+- Markdown
+- Embedded Ruby (requires [rebornix.Ruby](https://marketplace.visualstudio.com/items?itemName=rebornix.Ruby))
+- EJS
+- Svelte
+- CSS
+- Sass
+- Scss
+- Less
+- JavaScript
+- JSX
+- TSX
+
+You can always add your own languages via the configuration if needed.
+
+### Version Switching (Coming Soon)
+
+The ability to switch between Cirrus versions is coming soon. You can easily work with the version of Cirrus outside of the latest release.
 
 ## Requirements
 
@@ -18,54 +54,27 @@ If you have any requirements or dependencies, add a section describing those and
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### `cirrus-intellisense.html-languages`
 
-For example:
+List of file extensions to enable Cirrus Intellisense to run on for HTML-based languages. This activates for text around the `class` attribute.
 
-This extension contributes the following settings:
+### `cirrus-intellisense.css-languages`
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+List of file extensions to enable Cirrus Intellisense to run on for CSS-based languages. This activates for text after the `@extend` keyword.
+
+### `cirrus-intellisense.js-languages`
+
+List of file extensions to enable Cirrus Intellisense to run on for JS-based languages. This activates for text around the `class` or `className` attributes.
+
+## Commands
+
+### `cirrus-intellisense.sync`
+
+To re-fetch Cirrus classes from the server, you can run the `cirrus-intellisense.sync` command. You can run the command pressing `Ctrl+Shift+P` (or `Cmd+Shift+P`) and typing `Resync and cache Cirrus class definitions` and pressing `Enter`.
+
+You can also trigger this command by clicking on the small cloud icon at the bottom left of VsCode.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+*TBA*
 
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**

@@ -3,11 +3,22 @@
   "displayName": "cirrus-intellisense",
   "description": "Autocomplete for Cirrus UI",
   "version": "0.0.1",
+  "publisher": "timonwong",
+  "author": "Stanley Lim (https://github.com/Spiderpig86)",
   "engines": {
     "vscode": "^1.71.0"
   },
   "categories": [
-    "Other"
+    "Linters",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "cirrus autocomplete",
+    "autocomplete",
+    "cirrus intellisense",
+    "cirrus",
+    "cirrus-ui",
+    "cirrus-css"
   ],
   "activationEvents": [
     "*"
@@ -64,6 +75,10 @@
         }
       }
     ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cirrus-UI/Cirrus-Intellisense"
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
