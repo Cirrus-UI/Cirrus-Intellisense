@@ -4,7 +4,7 @@ Adds all the classes for [Cirrus CSS](https://github.com/Spiderpig86/Cirrus/tree
 
 ## Installation
 
-<a href="https://marketplace.visualstudio.com/items?itemName=Spiderpig86.cirrus-intellisense/"><strong>Install for Visual Studio Code »</strong></a>
+<a href="https://marketplace.visualstudio.com/items?itemName=Spiderpig86.cirrus-intellisense"><strong>Install for Visual Studio Code »</strong></a>
 
 After you've successfully installed Cirrus Intellisense, open up a file with a file extension it supports (e.g. `.html`) to get started!
 
