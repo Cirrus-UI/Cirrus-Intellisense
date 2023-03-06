@@ -12,13 +12,13 @@ After you've successfully installed Cirrus Intellisense, open up a file with a f
 
 ### Autocompletion
 
-![](./images/Intellisense-AutoComplete.jpg)
+![](https://raw.githubusercontent.com/Cirrus-UI/Cirrus-Intellisense/main/images/Intellisense-AutoComplete.jpg)
 
 Fast auto-completion for class names right at your finger tips.
 
 ### Multi-langage Support
 
-![](./images/Intellisense-Languages.jpg)
+![](https://raw.githubusercontent.com/Cirrus-UI/Cirrus-Intellisense/main/images/Intellisense-Languages.jpg)
 
 Autocompletion for a large variety of languages ranging from Sass, React, and many more. By default, Cirrus Intellisense supports the following languages right out the box:
 
