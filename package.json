@@ -3,7 +3,7 @@
   "displayName": "cirrus-intellisense",
   "description": "Autocomplete for Cirrus UI",
   "version": "0.0.1",
-  "publisher": "timonwong",
+  "publisher": "Spiderpig86",
   "author": "Stanley Lim (https://github.com/Spiderpig86)",
   "engines": {
     "vscode": "^1.71.0"
