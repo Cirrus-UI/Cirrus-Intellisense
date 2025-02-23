@@ -1,7 +1,18 @@
 import * as css from "css";
 
 export default class CssExtractor {
-    private static classRegex = /[.]([\w-]+)/g;
+    /*
+        Should match the following:
+            .hover\:bg-blue-500
+            .u-flex-row
+            .dark\:group-hover\:bg-primary
+            .group-focus\:u-opacity-50
+            .md\:hover\:u-block
+        Not this:
+            .hover\:bg-blue-500:hover:is
+            .hover\:bg-blue-500:hover
+     */
+    private static classRegex = /[.]([\w-]+(\\:)?[\w-]+(\\:)?[\w-]+)/g;
 
     public static extract(ast: css.Stylesheet): string[] {
         const classes: string[] = [];

@@ -13,11 +13,14 @@ import { ProviderSyntax } from './provider-languages';
 
 const disposables: vscode.Disposable[] = [];
 let classAutocompleteItems: string[] = [];
+let backslashless: string[] = [];
 
 // Providers
-const PROVIDERS = new Map<ProviderSyntax, ClassProvider>([
-    [ProviderSyntax.HTML, new ClassProvider(/class=["|']([\w- ]*$)/)],
+const CSS_LIKE_PROVIDERS = new Map<ProviderSyntax, ClassProvider>([
     [ProviderSyntax.CSS, new ClassProvider(/@extend ([.\w- ]*$)/, `.`)],
+]);
+const OTHER_PROVIDERS = new Map<ProviderSyntax, ClassProvider>([
+    [ProviderSyntax.HTML, new ClassProvider(/class=["|']([\w- ]*$)/)],
     [ProviderSyntax.REACT, new ClassProvider(/className=["|']([\w- ]*$)/)],
     [ProviderSyntax.JAVASCRIPT, new ClassProvider(/class=["|']([\w- ]*$)/)],
 ]);
@@ -27,7 +30,7 @@ const statusBarItem = new StatusBarItem(Command.Sync);
 let syncing = false;
 
 export async function activate(context: vscode.ExtensionContext) {
-    await hydrate([...PROVIDERS.values()]);
+    await hydrate([...CSS_LIKE_PROVIDERS.values()], [...OTHER_PROVIDERS.values()]);
     registerProviders(context, disposables);
 }
 
@@ -36,7 +39,7 @@ export function deactivate() {
     unregisterProviders(disposables);
 }
 
-async function hydrate(providers: ClassProvider[]) {
+async function hydrate(cssLikeProviders: ClassProvider[], otherProviders: ClassProvider[]) {
     try {
         console.debug(`HYDRATE`);
         statusBarItem.setStatus(StatusBarItemIcon.LOADING, `Syncing latest version of Cirrus...`);
@@ -45,8 +48,13 @@ async function hydrate(providers: ClassProvider[]) {
         const classes = CssExtractor.extract(cssAst);
 
         classAutocompleteItems = _.uniq(classes);
+        // For other languages not CSS-based, we need to remove all the backslashes
+        backslashless = classAutocompleteItems.map(c => c.replaceAll(`\\`, ``));
 
-        providers.forEach((provider) => provider.setAutocompleteItems(classAutocompleteItems));
+        console.log(classAutocompleteItems);
+
+        cssLikeProviders.forEach((provider) => provider.setAutocompleteItems(classAutocompleteItems));
+        otherProviders.forEach((provider) => provider.setAutocompleteItems(backslashless));
 
         statusBarItem.setStatus(StatusBarItemIcon.DO_ACTION, `Cirrus synced. Click to sync again`);
     } catch (err) {
@@ -63,7 +71,7 @@ function registerProviders(context: vscode.ExtensionContext, disposables: vscode
             disposables.push(
                 vscode.languages.registerCompletionItemProvider(
                     language,
-                    PROVIDERS.get(ProviderSyntax.HTML)!,
+                    OTHER_PROVIDERS.get(ProviderSyntax.HTML)!,
                     ...TRIGGER_CHARS
                 )
             );
@@ -76,7 +84,7 @@ function registerProviders(context: vscode.ExtensionContext, disposables: vscode
             disposables.push(
                 vscode.languages.registerCompletionItemProvider(
                     language,
-                    PROVIDERS.get(ProviderSyntax.CSS)!,
+                    CSS_LIKE_PROVIDERS.get(ProviderSyntax.CSS)!,
                     ...TRIGGER_CHARS
                 )
             );
@@ -89,12 +97,12 @@ function registerProviders(context: vscode.ExtensionContext, disposables: vscode
             disposables.push(
                 vscode.languages.registerCompletionItemProvider(
                     language,
-                    PROVIDERS.get(ProviderSyntax.REACT)!,
+                    OTHER_PROVIDERS.get(ProviderSyntax.REACT)!,
                     ...TRIGGER_CHARS
                 ),
                 vscode.languages.registerCompletionItemProvider(
                     language,
-                    PROVIDERS.get(ProviderSyntax.JAVASCRIPT)!,
+                    OTHER_PROVIDERS.get(ProviderSyntax.JAVASCRIPT)!,
                     ...TRIGGER_CHARS
                 )
             );
@@ -108,7 +116,7 @@ function registerProviders(context: vscode.ExtensionContext, disposables: vscode
 
             syncing = true;
             try {
-                await hydrate([...PROVIDERS.values()]);
+                await hydrate([...CSS_LIKE_PROVIDERS.values()], [...OTHER_PROVIDERS.values()]);
             } catch (err) {
                 console.error(`Cirrus Intellisense`, err);
             } finally {
